@@ -1,0 +1,69 @@
+{
+  "common": {
+    "appName": "سعودي ريكروت",
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "search": "بحث",
+    "filter": "تصفية",
+    "apply": "تقديم",
+    "submit": "إرسال",
+    "back": "رجوع",
+    "next": "التالي",
+    "viewAll": "عرض الكل",
+    "noResults": "لم يتم العثور على نتائج",
+    "confirmDelete": "هل أنت متأكد من حذف هذا؟"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "jobs": "الوظائف",
+    "companies": "الشركات",
+    "dashboard": "لوحة التحكم",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "logout": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات"
+  },
+  "auth": {
+    "loginTitle": "مرحباً بعودتك",
+    "loginSubtitle": "سجل الدخول إلى حسابك",
+    "registerTitle": "إنشاء حساب جديد",
+    "registerSubtitle": "انضم إلى منصة التوظيف الرائدة في المملكة العربية السعودية",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "firstName": "الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "signUp": "إنشاء حساب",
+    "signIn": "تسجيل الدخول",
+    "employer": "صاحب عمل",
+    "jobSeeker": "باحث عن عمل"
+  },
+  "jobs": {
+    "title": "اعثر على فرصتك القادمة",
+    "searchPlaceholder": "المسمى الوظيفي، المهارة، أو الشركة",
+    "locationPlaceholder": "المدينة أو المنطقة",
+    "postedBy": "نشر بواسطة",
+    "applyNow": "تقدم الآن",
+    "applied": "تم التقديم",
+    "saveJob": "حفظ الوظيفة",
+    "share": "مشاركة",
+    "salary": "الراتب",
+    "experience": "الخبرة",
+    "jobType": "نوع الوظيفة",
+    "remote": "عن بُعد",
+    "featured": "مميزة"
+  },
+  "hero": {
+    "title": "اعثر على أفضل الكفاءات في السعودية",
+    "subtitle": "تواصل مع أفضل المهنيين والفرص في أنحاء المملكة",
+    "searchButton": "البحث عن وظائف",
+    "postJob": "نشر وظيفة"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "common": {
+    "appName": "SaudiRecruit",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "viewAll": "View All",
+    "noResults": "No results found",
+    "confirmDelete": "Are you sure you want to delete this?"
+  },
+  "nav": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "companies": "Companies",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "auth": {
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to your account",
+    "registerTitle": "Create Account",
+    "registerSubtitle": "Join the leading recruitment platform in Saudi Arabia",
+    "email": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signUp": "Sign Up",
+    "signIn": "Sign In",
+    "employer": "Employer",
+    "jobSeeker": "Job Seeker"
+  },
+  "jobs": {
+    "title": "Find Your Next Opportunity",
+    "searchPlaceholder": "Job title, skill, or company",
+    "locationPlaceholder": "City or region",
+    "postedBy": "Posted by",
+    "applyNow": "Apply Now",
+    "applied": "Applied",
+    "saveJob": "Save Job",
+    "share": "Share",
+    "salary": "Salary",
+    "experience": "Experience",
+    "jobType": "Job Type",
+    "remote": "Remote",
+    "featured": "Featured"
+  },
+  "hero": {
+    "title": "Find Top Talent in Saudi Arabia",
+    "subtitle": "Connect with the best professionals and opportunities across the Kingdom",
+    "searchButton": "Search Jobs",
+    "postJob": "Post a Job"
+  }
+}
