@@ -15,7 +15,8 @@
     "db:seed": "node scripts/seed.mjs",
     "db:seed:reset": "node scripts/seed.mjs --reset",
     "db:add-cv-table": "node scripts/add-cv-table.mjs",
-    "make-admin": "node scripts/make-admin.mjs"
+    "make-admin": "node scripts/make-admin.mjs",
+    "create-admin": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
