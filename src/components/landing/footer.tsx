@@ -1,76 +1,70 @@
 "use client";
 
-import Link from "next/link";
-import { siteConfig } from "@/config/site";
+import { motion } from "framer-motion";
+import { Mail, MapPin, Phone } from "lucide-react";
 
-const footerLinks = {
-  Platform: [
-    { label: "Find Jobs", href: "/jobs" },
-    { label: "Post a Job", href: "/register?role=employer" },
-    { label: "AI Matching", href: "#features" },
-    { label: "Pricing", href: "/pricing" },
-  ],
-  Company: [
-    { label: "About Us", href: "/about" },
-    { label: "Blog", href: "/blog" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
-  ],
-  Resources: [
-    { label: "Help Center", href: "/help" },
-    { label: "API Docs", href: "/docs" },
-    { label: "Saudization Guide", href: "/guides/saudization" },
-    { label: "Market Reports", href: "/reports" },
-  ],
-  Legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
-    { label: "GDPR", href: "/gdpr" },
-  ],
+const links = {
+  Platform: ["AI Matching", "Talent Search", "Compliance Tools", "Analytics Dashboard", "Team Collaboration"],
+  Company: ["About Us", "Careers", "Press", "Blog", "Contact"],
+  Resources: ["Documentation", "API Reference", "Help Center", "Webinars", "Case Studies"],
+  Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy", "GDPR Compliance"],
 };
+
+const socials = [
+  { icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>, href: "#", label: "LinkedIn" },
+  { icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>, href: "#", label: "X" },
+  { icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>, href: "#", label: "Instagram" },
+];
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.04] bg-navy-dark">
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        {/* Top section */}
-        <div className="grid gap-12 lg:grid-cols-5">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="relative h-9 w-9">
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-gold to-gold-dark" />
-                <div className="absolute inset-[2px] rounded-[6px] bg-navy-dark flex items-center justify-center">
-                  <span className="text-gold font-bold text-sm">SR</span>
-                </div>
-              </div>
-              <span className="text-lg font-bold text-white">
-                {siteConfig.name}
-              </span>
-            </Link>
-            <p className="mt-4 text-sm leading-relaxed text-white/30">
-              The premier recruitment platform for Saudi Arabia&apos;s
-              Vision 2030. Connecting global talent with the Kingdom&apos;s
-              most ambitious projects.
+    <footer className="relative pt-20 pb-8 overflow-hidden" style={{ background: "#060911", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main footer grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-16">
+          {/* Brand column */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: "linear-gradient(135deg, #D4AF37, #E8C954)", color: "#0A0F1C" }}>SR</div>
+              <span className="text-xl font-bold text-white">SaudiRecruit</span>
+            </div>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.4)" }}>
+              The premium recruitment and talent management platform built for Saudi Arabia&apos;s most ambitious organizations and global professionals.
             </p>
+
+            {/* Contact info */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: "#D4AF37" }} />
+                <span className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Riyadh, Kingdom of Saudi Arabia</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 flex-shrink-0" style={{ color: "#D4AF37" }} />
+                <span className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>hello@saudirecruit.com</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 flex-shrink-0" style={{ color: "#D4AF37" }} />
+                <span className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>+966 11 000 0000</span>
+              </div>
+            </div>
           </div>
 
-          {/* Links */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="mb-4 text-sm font-semibold text-white/50 uppercase tracking-wider">
-                {category}
-              </h4>
+          {/* Link columns */}
+          {Object.entries(links).map(([title, items]) => (
+            <div key={title}>
+              <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">{title}</h4>
               <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white/25 transition-colors hover:text-gold"
+                {items.map((item) => (
+                  <li key={item}>
+                    <a
+                      href="#"
+                      className="text-sm transition-colors duration-300"
+                      style={{ color: "rgba(255,255,255,0.35)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = "#D4AF37"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.35)"; }}
                     >
-                      {link.label}
-                    </Link>
+                      {item}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -79,17 +73,32 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="mt-16 border-t border-white/[0.04] pt-8">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-xs text-white/20">
-              &copy; {new Date().getFullYear()} {siteConfig.name}. All rights
-              reserved. Built for the Kingdom.
-            </p>
-            <div className="flex items-center gap-6">
-              <span className="text-xs text-white/15">
-                🇸🇦 Made for Saudi Arabia
-              </span>
-            </div>
+        <div className="h-px mb-8" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)" }} />
+
+        {/* Bottom bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>
+            &copy; {new Date().getFullYear()} SaudiRecruit. All rights reserved.
+          </p>
+
+          {/* Socials */}
+          <div className="flex items-center gap-3">
+            {socials.map((s) => {
+              const Icon = s.icon;
+              return (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.label}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300"
+                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)"; e.currentTarget.style.background = "rgba(212,175,55,0.08)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+                >
+                  <span style={{ color: "rgba(255,255,255,0.5)" }}><Icon /></span>
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 
@@ -14,17 +13,6 @@ function FloatingParticles() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationId: number;
-    const particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-      gold: boolean;
-    }> = [];
-
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -32,217 +20,145 @@ function FloatingParticles() {
     resize();
     window.addEventListener("resize", resize);
 
-    // Create particles
-    for (let i = 0; i < 60; i++) {
+    const particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number }[] = [];
+    for (let i = 0; i < 80; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
         size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.4 + 0.1,
-        gold: Math.random() > 0.7,
+        opacity: Math.random() * 0.5 + 0.1,
       });
     }
 
+    let animId: number;
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((p) => {
+      particles.forEach((p, i) => {
         p.x += p.vx;
         p.y += p.vy;
-
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.gold
-          ? `rgba(212, 175, 55, ${p.opacity})`
-          : `rgba(255, 255, 255, ${p.opacity * 0.5})`;
+        ctx.fillStyle = `rgba(212, 175, 55, ${p.opacity})`;
         ctx.fill();
-      });
 
-      // Draw connections
-      particles.forEach((a, i) => {
-        particles.slice(i + 1).forEach((b) => {
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[j].x - p.x;
+          const dy = particles[j].y - p.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(212, 175, 55, ${0.03 * (1 - dist / 150)})`;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(212, 175, 55, ${0.06 * (1 - dist / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
-        });
+        }
       });
-
-      animationId = requestAnimationFrame(animate);
+      animId = requestAnimationFrame(animate);
     };
-
     animate();
-
     return () => {
-      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 z-0 pointer-events-none"
-    />
-  );
+  return <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none" />;
 }
 
 export function Hero() {
+  const stats = [
+    { value: "10,000+", label: "Active Positions" },
+    { value: "50,000+", label: "Global Professionals" },
+    { value: "2,500+", label: "Partner Companies" },
+    { value: "97%", label: "Placement Rate" },
+  ];
+
+  const trustedBy = ["ARAMCO", "NEOM", "STC", "SABIC", "Red Sea Global", "ACWA Power"];
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-navy" />
-      <div className="absolute inset-0 grid-pattern" />
-      <div className="absolute inset-0 radial-glow-top" />
-
-      {/* Animated gradient orbs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-gold/5 blur-[120px] animate-float" />
-      <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full bg-gold/3 blur-[100px] animate-float" style={{ animationDelay: "3s" }} />
-
-      {/* Particles */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      <div className="absolute inset-0 bg-[#0A0F1C]" />
       <FloatingParticles />
 
-      {/* Decorative lines */}
-      <div className="absolute left-[20%] top-0 w-px h-full overflow-hidden opacity-10">
-        <div className="w-full h-32 bg-gradient-to-b from-transparent via-gold to-transparent animate-line" />
+      {/* Gradient orbs */}
+      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-60 blur-3xl pointer-events-none" style={{ background: "radial-gradient(circle, rgba(212,175,55,0.12), transparent 70%)" }} />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full opacity-40 blur-3xl pointer-events-none" style={{ background: "radial-gradient(circle, rgba(59,130,246,0.08), transparent 70%)" }} />
+
+      {/* Grid */}
+      <div className="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+
+      {/* Animated lines */}
+      <div className="absolute left-[10%] top-0 w-px h-full overflow-hidden pointer-events-none">
+        <motion.div className="w-full h-32" style={{ background: "linear-gradient(to bottom, transparent, rgba(212,175,55,0.2), transparent)" }} animate={{ y: ["-100%", "100vh"] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} />
       </div>
-      <div className="absolute right-[30%] top-0 w-px h-full overflow-hidden opacity-5">
-        <div className="w-full h-48 bg-gradient-to-b from-transparent via-white to-transparent animate-line" style={{ animationDelay: "4s" }} />
+      <div className="absolute right-[15%] top-0 w-px h-full overflow-hidden pointer-events-none">
+        <motion.div className="w-full h-32" style={{ background: "linear-gradient(to bottom, transparent, rgba(212,175,55,0.1), transparent)" }} animate={{ y: ["-100%", "100vh"] }} transition={{ duration: 12, repeat: Infinity, ease: "linear", delay: 3 }} />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-32 pb-20 lg:px-8 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="inline-flex items-center gap-2 rounded-full border border-gold/20 bg-gold/5 backdrop-blur-sm px-5 py-2 mb-8"
-        >
-          <Sparkles className="h-4 w-4 text-gold" />
-          <span className="text-sm font-medium text-gold">
-            Saudi Vision 2030 Certified Platform
-          </span>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-8" style={{ border: "1px solid rgba(212,175,55,0.2)", background: "rgba(212,175,55,0.05)", backdropFilter: "blur(12px)" }}>
+          <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+          <span className="text-sm font-medium text-[#D4AF37] tracking-wide">Premium Talent Platform for Saudi Arabia</span>
         </motion.div>
 
         {/* Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mx-auto max-w-5xl text-5xl font-extrabold leading-[1.1] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl"
-        >
-          <span className="gradient-text-white">Connecting</span>
-          <br />
-          <span className="gradient-text text-glow-gold">World-Class Talent</span>
-          <br />
-          <span className="gradient-text-white">with Saudi Ambition</span>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }} className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.1] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <span className="block text-white" style={{ textShadow: "0 0 60px rgba(255,255,255,0.08)" }}>Connecting</span>
+          <span className="block" style={{ background: "linear-gradient(135deg, #D4AF37, #E8C954, #D4AF37)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", textShadow: "none", filter: "drop-shadow(0 0 40px rgba(212,175,55,0.3))" }}>World-Class Talent</span>
+          <span className="block text-white/90">with Saudi Ambition</span>
         </motion.h1>
 
-        {/* Subheading */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="mx-auto mt-8 max-w-2xl text-lg text-white/40 leading-relaxed md:text-xl"
-        >
-          The premier recruitment platform engineered for the Kingdom&apos;s
-          most ambitious organizations. AI-powered matching, seamless hiring,
-          and world-class talent acquisition.
+        {/* Subtitle */}
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10 font-light" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Inter', sans-serif" }}>
+          The premium recruitment platform built for Saudi Arabia&apos;s Vision 2030. Find exceptional professionals, streamline hiring, and build the workforce of tomorrow.
         </motion.p>
 
         {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-        >
-          <Link
-            href="/register?role=employer"
-            className="btn-premium group flex items-center gap-2 rounded-xl bg-gradient-to-r from-gold to-gold-dark px-8 py-4 text-base font-bold text-navy shadow-lg shadow-gold/20"
-          >
-            Start Hiring Today
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Link>
-          <Link
-            href="/register?role=job_seeker"
-            className="group flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-8 py-4 text-base font-semibold text-white transition-all hover:border-white/20 hover:bg-white/10"
-          >
-            <Play className="h-4 w-4 text-gold" />
-            Find Your Next Role
-          </Link>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <a href="/register" className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5" style={{ background: "linear-gradient(135deg, #D4AF37, #B8941F)", color: "#0A0F1C", boxShadow: "0 4px 20px rgba(212,175,55,0.3)" }}>
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.15), transparent)" }} />
+            <span className="relative">Find Opportunities</span>
+            <ArrowRight className="relative w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </a>
+          <a href="/register" className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-white font-medium transition-all duration-300 hover:-translate-y-0.5" style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)" }}>
+            <Play className="w-5 h-5 text-[#D4AF37]" />
+            Post a Job
+          </a>
         </motion.div>
 
-        {/* Stats Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
-          className="mt-24 grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-0 md:divide-x md:divide-white/10"
-        >
-          {[
-            { value: "10,000+", label: "Active Positions" },
-            { value: "50,000+", label: "Global Professionals" },
-            { value: "2,500+", label: "Partner Companies" },
-            { value: "97%", label: "Placement Rate" },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.3 + i * 0.1 }}
-              className="px-4 md:px-8"
-            >
-              <div className="text-3xl font-bold gradient-text lg:text-4xl">
-                {stat.value}
+        {/* Stats */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mb-16">
+          {stats.map((stat, i) => (
+            <div key={i} className="group relative p-6 rounded-2xl transition-all duration-500 hover:-translate-y-1" style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: "linear-gradient(135deg, rgba(212,175,55,0.08), transparent)" }} />
+              <div className="relative">
+                <div className="text-3xl sm:text-4xl font-bold mb-1" style={{ background: "linear-gradient(135deg, #D4AF37, #E8C954)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{stat.value}</div>
+                <div className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>{stat.label}</div>
               </div>
-              <div className="mt-1 text-sm text-white/30">{stat.label}</div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
 
-        {/* Trusted By */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.6 }}
-          className="mt-24"
-        >
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/20 mb-8">
-            Trusted by leading organizations across the Kingdom
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-            {["ARAMCO", "NEOM", "STC", "SABIC", "Saudi Telecom", "Red Sea Global"].map(
-              (company) => (
-                <span
-                  key={company}
-                  className="text-sm font-semibold tracking-wider text-white/15 hover:text-white/30 transition-colors cursor-default"
-                >
-                  {company}
-                </span>
-              )
-            )}
+        {/* Trusted by */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.8 }}>
+          <p className="text-xs uppercase font-medium mb-6" style={{ letterSpacing: "0.3em", color: "rgba(255,255,255,0.2)" }}>Trusted by industry leaders</p>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+            {trustedBy.map((company) => (
+              <span key={company} className="text-sm md:text-base font-semibold tracking-wider transition-colors duration-300" style={{ color: "rgba(255,255,255,0.15)" }}>{company}</span>
+            ))}
           </div>
         </motion.div>
       </div>
 
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-navy to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to top, #0A0F1C, transparent)" }} />
     </section>
   );
 }

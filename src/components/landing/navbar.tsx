@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronRight } from "lucide-react";
-import { siteConfig } from "@/config/site";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -18,112 +17,98 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "glass py-3 shadow-lg shadow-black/10"
-            : "bg-transparent py-5"
-        }`}
-      >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      style={{
+        background: scrolled ? "rgba(10,15,28,0.85)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-9 w-9">
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-gold to-gold-dark" />
-              <div className="absolute inset-[2px] rounded-[6px] bg-navy flex items-center justify-center">
-                <span className="text-gold font-bold text-sm">SR</span>
-              </div>
+            <div className="relative w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))", border: "1px solid rgba(212,175,55,0.3)" }}>
+              <span className="text-sm font-bold text-[#D4AF37]">SR</span>
             </div>
-            <span className="text-lg font-bold tracking-tight text-white group-hover:text-gold transition-colors">
-              {siteConfig.name}
+            <span className="text-xl font-bold text-white tracking-tight">
+              Saudi<span className="text-[#D4AF37]">Recruit</span>
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden items-center gap-8 lg:flex">
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <a
-                key={link.href}
+                key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-white/60 transition-colors hover:text-white relative group"
+                className="relative px-4 py-2 text-sm font-medium transition-colors duration-300 group"
+                style={{ color: "rgba(255,255,255,0.6)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,1)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 rounded-full transition-all duration-300 group-hover:w-6" style={{ background: "#D4AF37" }} />
               </a>
             ))}
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden items-center gap-3 lg:flex">
-            <Link
-              href="/login"
-              className="px-4 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
-            >
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/login" className="text-sm font-medium transition-colors duration-300" style={{ color: "rgba(255,255,255,0.6)" }}>
               Sign In
             </Link>
             <Link
               href="/register"
-              className="btn-premium rounded-lg bg-gradient-to-r from-gold to-gold-dark px-5 py-2.5 text-sm font-semibold text-navy"
+              className="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 hover:-translate-y-0.5"
+              style={{
+                background: "linear-gradient(135deg, #D4AF37, #B8941F)",
+                color: "#0A0F1C",
+                boxShadow: "0 2px 12px rgba(212,175,55,0.25)",
+              }}
             >
-              Get Started
-              <ChevronRight className="ml-1 inline h-4 w-4" />
+              Get Started &rsaquo;
             </Link>
           </div>
 
-          {/* Mobile Toggle */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden text-white p-2"
-          >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          {/* Mobile toggle */}
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-white/70 hover:text-white transition-colors">
+            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-      </motion.nav>
+      </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-navy/98 backdrop-blur-xl pt-24 px-6 lg:hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden overflow-hidden"
+            style={{ background: "rgba(10,15,28,0.95)", backdropFilter: "blur(20px)", borderTop: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <div className="flex flex-col gap-6">
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-semibold text-white/80 hover:text-gold transition-colors"
-                >
+            <div className="px-4 py-6 space-y-1">
+              {navLinks.map((link) => (
+                <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)} className="block px-4 py-3 text-base font-medium rounded-lg transition-colors" style={{ color: "rgba(255,255,255,0.7)" }}>
                   {link.label}
-                </motion.a>
+                </a>
               ))}
-              <div className="mt-8 flex flex-col gap-3">
-                <Link
-                  href="/login"
-                  className="rounded-lg border border-white/10 px-6 py-3 text-center font-medium text-white"
-                >
+              <div className="pt-4 space-y-3">
+                <Link href="/login" className="block text-center px-4 py-3 text-sm font-medium rounded-lg" style={{ color: "rgba(255,255,255,0.7)", border: "1px solid rgba(255,255,255,0.1)" }}>
                   Sign In
                 </Link>
-                <Link
-                  href="/register"
-                  className="rounded-lg bg-gradient-to-r from-gold to-gold-dark px-6 py-3 text-center font-semibold text-navy"
-                >
+                <Link href="/register" className="block text-center px-4 py-3 text-sm font-semibold rounded-lg" style={{ background: "linear-gradient(135deg, #D4AF37, #B8941F)", color: "#0A0F1C" }}>
                   Get Started
                 </Link>
               </div>
@@ -131,6 +116,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </motion.nav>
   );
 }
