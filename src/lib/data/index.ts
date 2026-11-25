@@ -1,6 +1,7 @@
 import { and, count, desc, eq, ilike, isNull, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { applications, companies, jobs, jobSeekerProfiles, users } from "@/lib/db/schema";
+import { applications, companies, jobs, jobSeekerProfiles, resumeFiles, users } from "@/lib/db/schema";
+import { resumeIdFromPath } from "@/lib/resume";
 
 /**
  * Read helpers for server components. Each returns `{ data, error }` so pages can
@@ -315,6 +316,8 @@ export function getEmployerApplicants(companyId: string) {
         email: users.email,
         headline: jobSeekerProfiles.headline,
         city: jobSeekerProfiles.currentCity,
+        appResume: applications.resumeUrl,
+        profileResume: jobSeekerProfiles.resumeUrl,
       })
       .from(applications)
       .innerJoin(jobs, eq(applications.jobId, jobs.id))
@@ -367,5 +370,220 @@ export function getAdminOverview() {
       recentJobs,
       recentUsers,
     };
+  });
+}
+
+/* ---------- CVs ---------- */
+
+export async function getResumeMeta(path?: string | null) {
+  const id = resumeIdFromPath(path);
+  if (!id) return null;
+  try {
+    const [row] = await db
+      .select({ id: resumeFiles.id, fileName: resumeFiles.fileName, sizeBytes: resumeFiles.sizeBytes, createdAt: resumeFiles.createdAt })
+      .from(resumeFiles)
+      .where(eq(resumeFiles.id, id))
+      .limit(1);
+    return row ?? null;
+  } catch {
+    return null;
+  }
+}
+
+const candidateFields = {
+  userId: users.id,
+  firstName: users.firstName,
+  lastName: users.lastName,
+  email: users.email,
+  phone: users.phone,
+  role: users.role,
+  isActive: users.isActive,
+  joinedAt: users.createdAt,
+  lastLoginAt: users.lastLoginAt,
+  headline: jobSeekerProfiles.headline,
+  summary: jobSeekerProfiles.summary,
+  currentCity: jobSeekerProfiles.currentCity,
+  currentJobTitle: jobSeekerProfiles.currentJobTitle,
+  desiredJobTitle: jobSeekerProfiles.desiredJobTitle,
+  experienceLevel: jobSeekerProfiles.experienceLevel,
+  totalExperienceYears: jobSeekerProfiles.totalExperienceYears,
+  visaStatus: jobSeekerProfiles.visaStatus,
+  skills: jobSeekerProfiles.skills,
+  isOpenToWork: jobSeekerProfiles.isOpenToWork,
+  profileResume: jobSeekerProfiles.resumeUrl,
+};
+
+/** One application, only if it belongs to a job of the employer's company. */
+export function getApplicantDetail(applicationId: string, companyId: string) {
+  return safe(async () => {
+    const [row] = await db
+      .select({
+        ...candidateFields,
+        applicationId: applications.id,
+        status: applications.status,
+        coverLetter: applications.coverLetter,
+        appliedAt: applications.createdAt,
+        appResume: applications.resumeUrl,
+        jobTitle: jobs.title,
+        jobSlug: jobs.slug,
+      })
+      .from(applications)
+      .innerJoin(jobs, eq(applications.jobId, jobs.id))
+      .innerJoin(users, eq(applications.applicantId, users.id))
+      .leftJoin(jobSeekerProfiles, eq(jobSeekerProfiles.userId, users.id))
+      .where(and(eq(applications.id, applicationId), eq(jobs.companyId, companyId), isNull(applications.deletedAt)))
+      .limit(1);
+    if (!row) return null;
+    const resume = await getResumeMeta(row.appResume ?? row.profileResume);
+    return { ...row, resume };
+  });
+}
+
+/* ---------- Admin ---------- */
+
+export function adminListUsers(q?: string, role?: string) {
+  return safe(() => {
+    const conds: (SQL | undefined)[] = [isNull(users.deletedAt)];
+    if (q) {
+      const like = `%${q}%`;
+      conds.push(or(ilike(users.email, like), ilike(users.firstName, like), ilike(users.lastName, like)));
+    }
+    if (role) conds.push(sql`${users.role} = ${role}`);
+    return db
+      .select({
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        email: users.email,
+        role: users.role,
+        isActive: users.isActive,
+        createdAt: users.createdAt,
+        headline: jobSeekerProfiles.headline,
+        resumeUrl: jobSeekerProfiles.resumeUrl,
+        applications: sql<number>`(select count(*) from ${applications} where ${applications.applicantId} = ${users.id})`.mapWith(Number),
+      })
+      .from(users)
+      .leftJoin(jobSeekerProfiles, eq(jobSeekerProfiles.userId, users.id))
+      .where(and(...conds))
+      .orderBy(desc(users.createdAt))
+      .limit(200);
+  });
+}
+
+export function adminGetUser(userId: string) {
+  return safe(async () => {
+    const [row] = await db
+      .select(candidateFields)
+      .from(users)
+      .leftJoin(jobSeekerProfiles, eq(jobSeekerProfiles.userId, users.id))
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!row) return null;
+    const [resume, apps, [company]] = await Promise.all([
+      getResumeMeta(row.profileResume),
+      db
+        .select({
+          id: applications.id,
+          status: applications.status,
+          createdAt: applications.createdAt,
+          resumeUrl: applications.resumeUrl,
+          jobTitle: jobs.title,
+          jobSlug: jobs.slug,
+          companyName: companies.name,
+        })
+        .from(applications)
+        .innerJoin(jobs, eq(applications.jobId, jobs.id))
+        .innerJoin(companies, eq(jobs.companyId, companies.id))
+        .where(eq(applications.applicantId, userId))
+        .orderBy(desc(applications.createdAt)),
+      db.select({ name: companies.name, slug: companies.slug }).from(companies).where(eq(companies.ownerId, userId)).limit(1),
+    ]);
+    return { ...row, resume, applications: apps, company: company ?? null };
+  });
+}
+
+export function adminListCompanies(q?: string) {
+  return safe(() => {
+    const conds: (SQL | undefined)[] = [isNull(companies.deletedAt)];
+    if (q) conds.push(ilike(companies.name, `%${q}%`));
+    return db
+      .select({
+        id: companies.id,
+        name: companies.name,
+        slug: companies.slug,
+        industry: companies.industry,
+        city: companies.city,
+        crNumber: companies.crNumber,
+        isVerified: companies.isVerified,
+        createdAt: companies.createdAt,
+        ownerId: users.id,
+        ownerEmail: users.email,
+        ownerName: sql<string>`${users.firstName} || ' ' || ${users.lastName}`,
+        jobs: sql<number>`(select count(*) from ${jobs} where ${jobs.companyId} = ${companies.id} and ${jobs.deletedAt} is null)`.mapWith(Number),
+      })
+      .from(companies)
+      .innerJoin(users, eq(companies.ownerId, users.id))
+      .where(and(...conds))
+      .orderBy(desc(companies.createdAt))
+      .limit(200);
+  });
+}
+
+export function adminListJobs(q?: string, status?: string) {
+  return safe(() => {
+    const conds: (SQL | undefined)[] = [isNull(jobs.deletedAt)];
+    if (q) conds.push(or(ilike(jobs.title, `%${q}%`), ilike(companies.name, `%${q}%`)));
+    if (status) conds.push(sql`${jobs.status} = ${status}`);
+    return db
+      .select({
+        id: jobs.id,
+        slug: jobs.slug,
+        title: jobs.title,
+        status: jobs.status,
+        city: jobs.city,
+        applicationCount: jobs.applicationCount,
+        createdAt: jobs.createdAt,
+        companyName: companies.name,
+        companySlug: companies.slug,
+      })
+      .from(jobs)
+      .innerJoin(companies, eq(jobs.companyId, companies.id))
+      .where(and(...conds))
+      .orderBy(desc(jobs.createdAt))
+      .limit(200);
+  });
+}
+
+export function adminListApplications(q?: string, status?: string) {
+  return safe(() => {
+    const conds: (SQL | undefined)[] = [isNull(applications.deletedAt)];
+    if (q) {
+      const like = `%${q}%`;
+      conds.push(or(ilike(users.email, like), ilike(users.firstName, like), ilike(users.lastName, like), ilike(jobs.title, like), ilike(companies.name, like)));
+    }
+    if (status) conds.push(sql`${applications.status} = ${status}`);
+    return db
+      .select({
+        id: applications.id,
+        status: applications.status,
+        createdAt: applications.createdAt,
+        resumeUrl: applications.resumeUrl,
+        profileResume: jobSeekerProfiles.resumeUrl,
+        userId: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        email: users.email,
+        jobTitle: jobs.title,
+        jobSlug: jobs.slug,
+        companyName: companies.name,
+      })
+      .from(applications)
+      .innerJoin(jobs, eq(applications.jobId, jobs.id))
+      .innerJoin(companies, eq(jobs.companyId, companies.id))
+      .innerJoin(users, eq(applications.applicantId, users.id))
+      .leftJoin(jobSeekerProfiles, eq(jobSeekerProfiles.userId, users.id))
+      .where(and(...conds))
+      .orderBy(desc(applications.createdAt))
+      .limit(300);
   });
 }

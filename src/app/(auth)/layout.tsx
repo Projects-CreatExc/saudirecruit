@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import { Check } from "lucide-react";
+import { getSessionUser } from "@/lib/auth/session";
 import { Logo } from "@/components/ui/misc";
 
 const points = [
@@ -8,7 +10,8 @@ const points = [
   "Post roles and manage applicants for free",
 ];
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  if (await getSessionUser()) redirect("/dashboard");
   return (
     <div className="grid min-h-screen lg:grid-cols-[1fr_minmax(420px,0.85fr)]">
       <div className="flex flex-col px-5 py-6 sm:px-10">

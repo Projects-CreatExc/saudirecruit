@@ -11,7 +11,7 @@ import { Alert } from "@/components/ui/field";
 import { Avatar, Badge, Card, Container } from "@/components/ui/misc";
 import { getSessionUser } from "@/lib/auth/session";
 import { APPLICATION_STATUSES, EXPERIENCE_LEVELS, VISA_STATUSES, isSeekerRole, labelFor, parseSkills } from "@/lib/constants";
-import { getJobBySlug, getUserApplicationForJob } from "@/lib/data";
+import { getAccount, getJobBySlug, getResumeMeta, getUserApplicationForJob } from "@/lib/data";
 import { db } from "@/lib/db";
 import { jobs } from "@/lib/db/schema";
 import { timeAgo } from "@/lib/utils";
@@ -56,6 +56,8 @@ export default async function JobPage({ params }: Props) {
   if (job.status !== "active" && !isOwner) notFound();
 
   const existing = user && isSeekerRole(user.role) ? (await getUserApplicationForJob(user.id, job.id)).data : null;
+  const cv =
+    user && isSeekerRole(user.role) && !existing ? await getResumeMeta((await getAccount(user.id)).data?.profile?.resumeUrl) : null;
   const skills = parseSkills(job.skills);
   const visa = job.visaRequirement && job.visaRequirement !== "not_specified" ? labelFor(VISA_STATUSES, job.visaRequirement) : null;
 
@@ -163,7 +165,7 @@ export default async function JobPage({ params }: Props) {
                   </LinkButton>
                 </div>
               ) : (
-                <ApplyForm jobId={job.id} slug={job.slug} />
+                <ApplyForm jobId={job.id} slug={job.slug} cvName={cv?.fileName} />
               )}
             </div>
           </Card>

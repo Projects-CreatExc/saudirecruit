@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Users } from "lucide-react";
+import { Download, Users } from "lucide-react";
 import { ApplicationStatusBadge } from "@/components/app/status";
 import { StatusSelect } from "@/components/app/status-select";
 import { LinkButton } from "@/components/ui/button";
@@ -71,9 +71,9 @@ export default async function ApplicantsPage({ searchParams }: { searchParams: P
             <div key={a.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start">
               <Avatar name={`${a.firstName} ${a.lastName}`} size={44} />
               <div className="min-w-0 flex-1">
-                <p className="font-semibold">
+                <Link href={`/dashboard/applicants/${a.id}`} className="font-semibold hover:underline">
                   {a.firstName} {a.lastName}
-                </p>
+                </Link>
                 <p className="text-sm text-body">{[a.headline, a.city].filter(Boolean).join(" · ") || "No headline yet"}</p>
                 <p className="mt-1 text-sm text-muted">
                   Applied for{" "}
@@ -92,7 +92,21 @@ export default async function ApplicantsPage({ searchParams }: { searchParams: P
                   </details>
                 )}
               </div>
-              <div className="shrink-0">
+              <div className="flex shrink-0 flex-wrap items-center gap-2">
+                <Link
+                  href={`/dashboard/applicants/${a.id}`}
+                  className="inline-flex h-9 items-center rounded-full border border-line-strong px-3.5 text-sm font-medium hover:border-ink"
+                >
+                  View profile
+                </Link>
+                {(a.appResume ?? a.profileResume) && (
+                  <a
+                    href={a.appResume ?? a.profileResume ?? "#"}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-full border border-line-strong px-3.5 text-sm font-medium hover:border-ink"
+                  >
+                    <Download className="size-3.5" /> CV
+                  </a>
+                )}
                 {a.status === "withdrawn" ? (
                   <ApplicationStatusBadge status={a.status} />
                 ) : (

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { ResumeUpload } from "@/components/app/resume-upload";
 import { PasswordForm, ProfileForm } from "@/components/app/settings-forms";
 import { Alert } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/misc";
 import { requireUser } from "@/lib/auth/session";
 import { isSeekerRole, parseSkills } from "@/lib/constants";
-import { getAccount } from "@/lib/data";
+import { getAccount, getResumeMeta } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -15,6 +16,7 @@ export default async function SettingsPage() {
   if (!res.data) return <Alert>We couldn&apos;t find your account.</Alert>;
   const { user: u, profile: p } = res.data;
   const seeker = isSeekerRole(u.role);
+  const resume = seeker ? await getResumeMeta(p?.resumeUrl) : null;
 
   const initial = {
     firstName: u.firstName,
@@ -37,6 +39,9 @@ export default async function SettingsPage() {
     <>
       <PageHeader title={seeker ? "Profile & settings" : "Settings"} description="Manage your account and how you appear to others." />
       <div className="space-y-6">
+        {seeker && (
+          <ResumeUpload current={resume ? { ...resume, createdAt: new Date(resume.createdAt).toISOString() } : null} />
+        )}
         <ProfileForm initial={initial} email={u.email} isSeeker={seeker} />
         <PasswordForm />
       </div>

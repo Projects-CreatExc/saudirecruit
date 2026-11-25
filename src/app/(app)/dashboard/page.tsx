@@ -50,6 +50,7 @@ async function SeekerDashboard({ userId, name }: { userId: string; name: string 
 
   const p = accRes.data?.profile;
   const checks = [
+    { done: !!p?.resumeUrl, label: "Upload your CV" },
     { done: !!p?.headline, label: "Add a headline" },
     { done: !!p?.summary, label: "Write a short summary" },
     { done: !!p?.skills, label: "List your skills" },
@@ -258,7 +259,7 @@ async function AdminDashboard({ role }: { role: UserRole }) {
       </div>
 
       <section className="mt-10">
-        <SectionTitle title="Recent job posts" />
+        <SectionTitle title="Recent job posts" href="/dashboard/admin/jobs" />
         {d.recentJobs.length === 0 ? (
           <EmptyState title="No jobs posted yet" />
         ) : (
@@ -309,15 +310,15 @@ async function AdminDashboard({ role }: { role: UserRole }) {
       </section>
 
       <section className="mt-10">
-        <SectionTitle title="Newest users" />
+        <SectionTitle title="Newest users" href="/dashboard/admin/users" />
         <Card className="divide-y divide-line">
           {d.recentUsers.map((u) => (
             <div key={u.id} className="flex items-center gap-3 p-4">
               <Avatar name={`${u.firstName} ${u.lastName}`} size={36} />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">
+                <Link href={`/dashboard/admin/users/${u.id}`} className="block truncate font-medium hover:underline">
                   {u.firstName} {u.lastName}
-                </p>
+                </Link>
                 <p className="truncate text-sm text-muted">{u.email}</p>
               </div>
               <span className="hidden text-sm text-muted sm:block">{ROLE_LABELS[u.role]}</span>

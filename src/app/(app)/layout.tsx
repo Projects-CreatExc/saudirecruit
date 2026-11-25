@@ -18,7 +18,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     : isAdminRole(user.role)
       ? [
           { href: "/dashboard", label: "Overview", icon: "LayoutDashboard" },
-          { href: "/jobs", label: "Public jobs", icon: "Search" },
+          { href: "/dashboard/admin/users", label: "Users", icon: "Users" },
+          { href: "/dashboard/admin/companies", label: "Companies", icon: "Building2" },
+          { href: "/dashboard/admin/jobs", label: "Jobs", icon: "Briefcase" },
+          { href: "/dashboard/admin/applications", label: "Applications", icon: "FileText" },
           { href: "/settings", label: "Settings", icon: "Settings" },
         ]
       : [

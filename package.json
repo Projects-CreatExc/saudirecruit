@@ -13,7 +13,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "node scripts/seed.mjs",
-    "db:seed:reset": "node scripts/seed.mjs --reset"
+    "db:seed:reset": "node scripts/seed.mjs --reset",
+    "db:add-cv-table": "node scripts/add-cv-table.mjs",
+    "make-admin": "node scripts/make-admin.mjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

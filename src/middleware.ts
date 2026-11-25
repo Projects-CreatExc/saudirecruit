@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const protectedRoutes = ["/dashboard", "/settings", "/applications"];
-const authRoutes = ["/login", "/register", "/forgot-password"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,10 +13,9 @@ export function middleware(request: NextRequest) {
 
   const isLoggedIn = !!token;
 
-  // Redirect logged-in users away from auth pages
-  if (isLoggedIn && authRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+  // Signed-in users are sent away from auth pages by the (auth) layout, which
+  // checks the account is still active. Doing it here from the cookie alone
+  // would loop forever for a deactivated user.
 
   // Redirect unauthenticated users to login
   if (
