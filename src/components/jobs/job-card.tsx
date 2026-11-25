@@ -33,7 +33,7 @@ export function JobCard({ job, showCompany = true }: { job: JobCardData; showCom
   const skills = parseSkills(job.skills).slice(0, 4);
   const posted = job.publishedAt ?? job.createdAt;
   return (
-    <article className="group relative rounded-[var(--radius-card)] border border-line bg-white p-5 transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-[var(--shadow-card)] sm:p-6">
+    <article className="group relative rounded-[var(--radius-card)] border border-line bg-white p-5 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-card)] sm:p-6">
       {showCompany && (
         <div className="mb-4 flex items-center gap-3">
           <Avatar name={job.companyName} src={job.companyLogo} size={40} square />
@@ -80,7 +80,7 @@ export function JobCard({ job, showCompany = true }: { job: JobCardData; showCom
         </div>
         <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end">
           <span className="text-xs text-subtle">{timeAgo(new Date(posted))}</span>
-          <span className={buttonStyles({ variant: "outline", size: "sm", className: "group-hover:border-ink" })} aria-hidden>
+          <span className={buttonStyles({ variant: "outline", size: "sm", className: "transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-white" })} aria-hidden>
             View role
           </span>
         </div>

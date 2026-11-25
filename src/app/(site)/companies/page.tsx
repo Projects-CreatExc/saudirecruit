@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgeCheck, Building2, Search } from "lucide-react";
+import { Reveal } from "@/components/motion/reveal";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Alert, Select } from "@/components/ui/field";
 import { Avatar, Badge, Container, EmptyState } from "@/components/ui/misc";
@@ -68,11 +69,11 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
           />
         ) : (
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {res.data.map((c) => (
-              <li key={c.id}>
+            {res.data.map((c, i) => (
+              <Reveal as="li" key={c.id} delay={(i % 3) * 70}>
                 <Link
                   href={`/companies/${c.slug}`}
-                  className="flex h-full flex-col rounded-[var(--radius-card)] border border-line bg-white p-6 transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[var(--shadow-card)]"
+                  className="flex h-full flex-col rounded-[var(--radius-card)] border border-line bg-white p-6 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-card)]"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar name={c.name} src={c.logoUrl} size={44} square />
@@ -94,7 +95,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                     </Badge>
                   </div>
                 </Link>
-              </li>
+              </Reveal>
             ))}
           </ul>
         )}

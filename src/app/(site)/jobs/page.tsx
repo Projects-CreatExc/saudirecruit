@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SearchX, SlidersHorizontal } from "lucide-react";
 import { JobCard } from "@/components/jobs/job-card";
+import { Reveal } from "@/components/motion/reveal";
 import { SearchBar } from "@/components/jobs/search-bar";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Checkbox, Label, Select, Alert } from "@/components/ui/field";
@@ -151,8 +152,10 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
             />
           ) : (
             <div className="grid gap-3">
-              {res.data.rows.map((job) => (
-                <JobCard key={job.id} job={job} />
+              {res.data.rows.map((job, i) => (
+                <Reveal key={job.id} delay={Math.min(i, 6) * 60}>
+                  <JobCard job={job} />
+                </Reveal>
               ))}
             </div>
           )}
