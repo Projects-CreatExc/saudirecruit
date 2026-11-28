@@ -350,3 +350,17 @@ details.faq[open]::details-content {
     animation: none !important;
   }
 }
+
+/* Installed app (standalone): respect the notch and home indicator */
+@media (display-mode: standalone) {
+  :root {
+    --sat: env(safe-area-inset-top);
+  }
+  .site-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior-y: none;
+  }
+}

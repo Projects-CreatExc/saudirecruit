@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { InstallButton } from "@/components/pwa/install";
 import { buttonStyles } from "@/components/ui/button";
 
 export function MobileMenu({ links, signedIn }: { links: { href: string; label: string }[]; signedIn: boolean }) {
@@ -41,7 +42,7 @@ export function MobileMenu({ links, signedIn }: { links: { href: string; label: 
       </button>
 
       {open && (
-        <div id="mobile-nav" className="fixed inset-x-0 top-[72px] bottom-0 z-40 animate-fade-up overflow-y-auto bg-white px-5 pt-4 pb-10">
+        <div id="mobile-nav" className="fixed inset-x-0 top-[calc(72px+var(--sat,0px))] bottom-0 z-40 animate-fade-up overflow-y-auto bg-white px-5 pt-4 pb-10">
           <nav aria-label="Mobile" className="flex flex-col">
             {links.map((l) => (
               <Link
@@ -55,6 +56,7 @@ export function MobileMenu({ links, signedIn }: { links: { href: string; label: 
             ))}
           </nav>
           <div className="mt-8 grid gap-3">
+            <InstallButton variant="menu" />
             {signedIn ? (
               <>
                 <Link href="/dashboard" className={buttonStyles({ variant: "dark", size: "lg" })}>

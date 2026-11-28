@@ -205,7 +205,7 @@ export default async function JobPage({ params }: Props) {
         </aside>
       </div>
       {!isOwner && !existing && (!user || isSeekerRole(user.role)) && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 px-5 py-3 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
           <a href="#apply" className="flex h-12 items-center justify-center rounded-full bg-brand font-semibold text-white">
             {user ? "Apply now" : "Log in to apply"}
           </a>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSessionUser } from "@/lib/auth/session";
 import { LinkButton } from "@/components/ui/button";
 import { Container, Logo } from "@/components/ui/misc";
+import { InstallButton } from "@/components/pwa/install";
 import { MobileMenu } from "./mobile-menu";
 import { UserMenu } from "./user-menu";
 
@@ -16,7 +17,7 @@ export async function SiteHeader() {
   const user = await getSessionUser();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80">
+    <header className="site-header sticky top-0 z-40 border-b border-line/70 bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80">
       <Container className="flex h-[72px] items-center justify-between gap-6">
         <Logo />
 
@@ -33,6 +34,7 @@ export async function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <InstallButton />
           {user ? (
             <>
               <LinkButton href="/dashboard" variant="ghost" size="sm">
