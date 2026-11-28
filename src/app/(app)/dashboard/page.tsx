@@ -66,7 +66,7 @@ async function SeekerDashboard({ userId, name }: { userId: string; name: string 
         description="Here's where your search stands today."
         actions={<LinkButton href="/jobs" variant="dark">Find jobs</LinkButton>}
       />
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
         <Stat label="Applications" value={apps.length} />
         <Stat label="In progress" value={active} />
         <Stat label="Interviews and offers" value={interviews} />
@@ -182,7 +182,7 @@ async function EmployerDashboard({ userId, name }: { userId: string; name: strin
           <Alert>{jobsRes.error ?? appsRes.error}</Alert>
         </div>
       )}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
         <Stat label="Active jobs" value={jobs.filter((j) => j.status === "active").length} hint={`${jobs.length} total`} />
         <Stat label="Applicants" value={apps.length} />
         <Stat label="Waiting for review" value={newApps} />
@@ -251,7 +251,7 @@ async function AdminDashboard({ role }: { role: UserRole }) {
   return (
     <>
       <PageHeader title="Platform overview" description={`Signed in as ${ROLE_LABELS[role]}.`} />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
         <Stat label="Users" value={sum(d.roleCounts)} hint={`${d.roleCounts.job_seeker ?? 0} candidates · ${d.roleCounts.employer ?? 0} employers`} />
         <Stat label="Active jobs" value={d.jobCounts.active ?? 0} hint={`${sum(d.jobCounts)} total`} />
         <Stat label="Suspended jobs" value={d.jobCounts.suspended ?? 0} />

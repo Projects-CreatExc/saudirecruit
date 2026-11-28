@@ -74,7 +74,7 @@ export default async function JobPage({ params }: Props) {
   const statusMeta = existing ? APPLICATION_STATUSES.find((s) => s.value === existing.status) : null;
 
   return (
-    <Container className="py-8 sm:py-12">
+    <Container className="pt-8 pb-28 sm:pt-12 lg:pb-12">
       <Link href="/jobs" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink">
         <ArrowLeft className="size-4 rtl:rotate-180" /> All jobs
       </Link>
@@ -205,7 +205,7 @@ export default async function JobPage({ params }: Props) {
         </aside>
       </div>
       {!isOwner && !existing && (!user || isSeekerRole(user.role)) && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-line bg-white px-5 py-3 md:bottom-0 md:pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden">
           <a href="#apply" className="flex h-12 items-center justify-center rounded-full bg-brand font-semibold text-white">
             {user ? "Apply now" : "Log in to apply"}
           </a>

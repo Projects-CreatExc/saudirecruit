@@ -2,22 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Briefcase, Building2, FileText, LayoutDashboard, Search, Settings, Users } from "lucide-react";
+import { isActivePath, type NavItem } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
+import { NavIcon } from "./nav-icon";
 
-const ICONS = { LayoutDashboard, Briefcase, Building2, FileText, Search, Settings, Users };
-export type NavItem = { href: string; label: string; icon: keyof typeof ICONS };
-
+/** Sidebar for signed-in pages: pills on tablets, a column on desktop. Phones use the bottom tab bar. */
 export function SideNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
-  const isActive = (href: string) =>
-    href === "/dashboard" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
-
   return (
-    <nav aria-label="Account" className="-mx-5 flex gap-1 overflow-x-auto px-5 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
+    <nav aria-label="Account" className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
       {items.map((item) => {
-        const Icon = ICONS[item.icon];
-        const active = isActive(item.href);
+        const active = isActivePath(pathname, item.href);
         return (
           <Link
             key={item.href}
@@ -28,7 +23,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
               active ? "bg-ink text-white lg:bg-surface-2 lg:text-ink" : "text-ink-soft hover:bg-surface-2 hover:text-ink",
             )}
           >
-            <Icon className="size-4" aria-hidden />
+            <NavIcon name={item.icon} className="size-4" />
             {item.label}
           </Link>
         );

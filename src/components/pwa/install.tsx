@@ -153,7 +153,7 @@ export function InstallBanner() {
           role="region"
           aria-label="Install the app"
           className={cn(
-            "fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 animate-fade-up sm:hidden",
+            "fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-40 animate-fade-up md:hidden",
             "flex items-center gap-3 rounded-2xl border border-line bg-white/95 p-3 shadow-[var(--shadow-pop)] backdrop-blur",
           )}
         >

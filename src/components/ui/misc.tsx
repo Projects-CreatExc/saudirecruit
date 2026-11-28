@@ -114,10 +114,10 @@ export function PageHeader({
 
 export function Stat({ label, value, hint }: { label: string; value: ReactNode; hint?: string }) {
   return (
-    <Card className="p-5">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="mt-2 text-3xl font-medium tracking-[-0.03em]">{value}</p>
-      {hint && <p className="mt-1 text-xs text-subtle">{hint}</p>}
+    <Card className="p-4 sm:p-5">
+      <p className="text-xs leading-snug text-muted sm:text-sm">{label}</p>
+      <p className="mt-1.5 text-2xl font-medium tracking-[-0.03em] sm:mt-2 sm:text-3xl">{value}</p>
+      {hint && <p className="mt-1 hidden text-xs text-subtle sm:block">{hint}</p>}
     </Card>
   );
 }

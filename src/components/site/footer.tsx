@@ -34,7 +34,7 @@ const columns = [
 export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="mt-24 border-t border-line bg-white">
+    <footer className="site-footer mt-24 border-t border-line bg-white">
       <Container className="grid gap-12 py-16 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="max-w-xs">
           <Logo />

@@ -364,3 +364,52 @@ details.faq[open]::details-content {
     overscroll-behavior-y: none;
   }
 }
+
+/* ---------- App feel on touch devices ---------- */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  a,
+  button,
+  summary,
+  label,
+  [role="button"] {
+    touch-action: manipulation; /* no 300ms tap delay, no double-tap zoom on controls */
+  }
+}
+
+@media (hover: none) {
+  /* Tactile press feedback instead of hover states */
+  article.group:active,
+  a.spotlight:active {
+    transform: scale(0.985);
+  }
+}
+
+/* Each page eases in on navigation (see template.tsx) */
+/* Opacity only: a transform here would trap position:fixed bars inside the page while animating. */
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.page-in {
+  animation: page-in 0.28s ease-out both;
+}
+
+/* Installed app on a phone: the website footer isn't needed, the tab bar is the navigation */
+@media (display-mode: standalone) and (max-width: 767px) {
+  .site-footer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-in {
+    animation: none;
+  }
+}

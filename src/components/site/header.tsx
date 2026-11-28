@@ -3,6 +3,8 @@ import { getSessionUser } from "@/lib/auth/session";
 import { LinkButton } from "@/components/ui/button";
 import { Container, Logo } from "@/components/ui/misc";
 import { InstallButton } from "@/components/pwa/install";
+import { accountNav } from "@/lib/navigation";
+import { AppBack } from "./app-back";
 import { MobileMenu } from "./mobile-menu";
 import { UserMenu } from "./user-menu";
 
@@ -19,7 +21,10 @@ export async function SiteHeader() {
   return (
     <header className="site-header sticky top-0 z-40 border-b border-line/70 bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80">
       <Container className="flex h-[72px] items-center justify-between gap-6">
-        <Logo />
+        <div className="flex min-w-0 items-center">
+          <AppBack />
+          <Logo />
+        </div>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((l) => (
@@ -54,7 +59,7 @@ export async function SiteHeader() {
           )}
         </div>
 
-        <MobileMenu links={NAV_LINKS} signedIn={!!user} />
+        <MobileMenu links={NAV_LINKS} account={user ? accountNav(user.role) : null} name={user?.name ?? null} />
       </Container>
     </header>
   );
