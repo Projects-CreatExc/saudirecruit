@@ -37,6 +37,7 @@ const jobCardFields = {
   publishedAt: jobs.publishedAt,
   createdAt: jobs.createdAt,
   skills: jobs.skills,
+  tags: jobs.tags,
   companyName: companies.name,
   companySlug: companies.slug,
   companyLogo: companies.logoUrl,
@@ -63,6 +64,7 @@ export type JobCardData = {
   publishedAt: Date | null;
   createdAt: Date;
   skills: string | null;
+  tags: string | null;
   companyName: string;
   companySlug: string;
   companyLogo: string | null;
@@ -79,6 +81,7 @@ export type JobFilters = {
   type?: string;
   level?: string;
   category?: string;
+  tag?: string;
   remote?: boolean;
   page?: number;
 };
@@ -90,13 +93,14 @@ export function searchJobs(filters: JobFilters) {
     const conds: (SQL | undefined)[] = [liveJob, isNull(companies.deletedAt)];
     if (filters.q) {
       const like = `%${filters.q}%`;
-      conds.push(or(ilike(jobs.title, like), ilike(companies.name, like), ilike(jobs.skills, like), ilike(jobs.category, like)));
+      conds.push(or(ilike(jobs.title, like), ilike(companies.name, like), ilike(jobs.skills, like), ilike(jobs.tags, like), ilike(jobs.category, like)));
     }
     if (filters.city) conds.push(ilike(jobs.city, `%${filters.city}%`));
     if (filters.type) conds.push(sql`${jobs.jobType} = ${filters.type}`);
     if (filters.level) conds.push(sql`${jobs.experienceLevel} = ${filters.level}`);
     if (filters.category) conds.push(eq(jobs.category, filters.category));
     if (filters.remote) conds.push(eq(jobs.isRemote, true));
+    if (filters.tag) conds.push(ilike(jobs.tags, `%${JSON.stringify(filters.tag).slice(1, -1)}%`));
     const where = and(...conds);
     const page = Math.max(1, filters.page ?? 1);
 

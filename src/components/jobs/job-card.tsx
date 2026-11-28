@@ -30,7 +30,8 @@ export function JobMeta({ job }: { job: Pick<JobCardData, "city" | "isRemote" | 
 
 /** Wellfound-style listing row: company context first, then the role. */
 export function JobCard({ job, showCompany = true }: { job: JobCardData; showCompany?: boolean }) {
-  const skills = parseSkills(job.skills).slice(0, 4);
+  const tags = parseSkills(job.tags);
+  const skills = [...tags.map((t) => `#${t}`), ...parseSkills(job.skills)].slice(0, 5);
   const posted = job.publishedAt ?? job.createdAt;
   return (
     <article className="group relative rounded-[var(--radius-card)] border border-line bg-white p-5 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-card)] sm:p-6">

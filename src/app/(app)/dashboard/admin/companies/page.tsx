@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BadgeCheck, Building2 } from "lucide-react";
+import { BadgeCheck, Building2, Plus } from "lucide-react";
 import { AdminSearch, Td, Th } from "@/components/app/admin-ui";
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { Alert } from "@/components/ui/field";
 import { Avatar, Card, EmptyState, PageHeader } from "@/components/ui/misc";
 import { adminSetCompanyVerifiedAction } from "@/lib/actions/admin";
@@ -22,7 +22,15 @@ export default async function AdminCompaniesPage({ searchParams }: { searchParam
 
   return (
     <>
-      <PageHeader title="Companies" description="Verify employers after checking their Commercial Registration (CR) number." />
+      <PageHeader
+        title="Companies"
+        description="Companies the agency manages and employers who signed up. Verify after checking the CR number."
+        actions={
+          <LinkButton href="/dashboard/admin/companies/new" variant="dark">
+            <Plus className="size-4" /> Add company
+          </LinkButton>
+        }
+      />
       <AdminSearch action="/dashboard/admin/companies" q={q} placeholder="Search companies" />
       {res.error ? (
         <Alert>{res.error}</Alert>
@@ -45,7 +53,7 @@ export default async function AdminCompaniesPage({ searchParams }: { searchParam
               {res.data.map((c) => (
                 <tr key={c.id} className="hover:bg-surface">
                   <Td>
-                    <Link href={`/companies/${c.slug}`} className="flex items-center gap-3">
+                    <Link href={`/dashboard/admin/companies/${c.id}`} className="flex items-center gap-3">
                       <Avatar name={c.name} size={34} square />
                       <span className="min-w-0">
                         <span className="flex items-center gap-1 truncate font-medium hover:underline">

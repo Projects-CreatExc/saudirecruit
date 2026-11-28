@@ -12,6 +12,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:update": "node scripts/db-update.mjs",
     "db:seed": "node scripts/seed.mjs",
     "db:seed:reset": "node scripts/seed.mjs --reset",
     "db:add-cv-table": "node scripts/add-cv-table.mjs",

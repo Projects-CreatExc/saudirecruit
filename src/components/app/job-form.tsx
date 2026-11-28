@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import { adminCreateJobAction } from "@/lib/actions/agency-admin";
 import { createJobAction } from "@/lib/actions/recruiting";
+import { TagInput } from "./tag-input";
 import type { FormState } from "@/lib/actions/auth";
 import { CATEGORIES, EXPERIENCE_LEVELS, JOB_TYPES, SAUDI_CITIES, VISA_STATUSES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
@@ -20,14 +22,36 @@ function Group({ title, description, children }: { title: string; description: s
   );
 }
 
-export function JobForm() {
-  const [state, action, pending] = useActionState<FormState, FormData>(createJobAction, {});
+type AdminOptions = {
+  companies: { id: string; name: string }[];
+  fromRequest?: string;
+  initial?: Record<string, string>;
+};
+
+/** Job posting form. Employers post for their own company; admins pick any company and can feature the job. */
+export function JobForm({ admin, tagSuggestions = [] }: { admin?: AdminOptions; tagSuggestions?: string[] }) {
+  const [state, action, pending] = useActionState<FormState, FormData>(admin ? adminCreateJobAction : createJobAction, {});
   const fe = state.fieldErrors ?? {};
-  const v = state.values ?? {};
+  const v: Record<string, string> = { ...(admin?.initial ?? {}), ...(state.values ?? {}) };
 
   return (
     <form action={action} noValidate>
+      {admin?.fromRequest && <input type="hidden" name="fromRequest" value={admin.fromRequest} />}
       <Card className="divide-y divide-line">
+        {admin && (
+          <Group title="Company" description="Who is hiring. Add a new company first if it isn't listed.">
+            <Field label="Company" htmlFor="companyId" error={fe.companyId} className="sm:col-span-2">
+              <Select id="companyId" name="companyId" defaultValue={v.companyId ?? ""} aria-invalid={!!fe.companyId}>
+                <option value="">Select company</option>
+                {admin.companies.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          </Group>
+        )}
         <Group title="The role" description="A clear title and description get more qualified applicants.">
           <Field label="Job title" htmlFor="title" error={fe.title} className="sm:col-span-2">
             <Input id="title" name="title" placeholder="e.g. Senior Civil Engineer" defaultValue={v.title} aria-invalid={!!fe.title} />
@@ -62,6 +86,9 @@ export function JobForm() {
           <Field label="Skills" htmlFor="skills" error={fe.skills} hint="Comma separated, e.g. AutoCAD, Project management">
             <Input id="skills" name="skills" defaultValue={v.skills} />
           </Field>
+          <div className="sm:col-span-2">
+            <TagInput name="tags" label="Tags" defaultValue={v.tags} suggestions={tagSuggestions} hint="Used for search and filtering, e.g. Urgent, Night shift, Arabic speaker" />
+          </div>
           <Field label="Description" htmlFor="description" error={fe.description} hint="At least 50 characters." className="sm:col-span-2">
             <Textarea id="description" name="description" rows={7} defaultValue={v.description} aria-invalid={!!fe.description} />
           </Field>
@@ -110,6 +137,11 @@ export function JobForm() {
           <div className="flex items-end pb-2.5">
             <Checkbox name="saudizationApplicable" label="Saudization (Nitaqat) role" defaultChecked={v.saudizationApplicable === "on"} />
           </div>
+          {admin && (
+            <div className="sm:col-span-2">
+              <Checkbox name="isFeatured" label="Feature this job at the top of listings" defaultChecked={v.isFeatured === "on"} />
+            </div>
+          )}
         </Group>
 
         <div className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">

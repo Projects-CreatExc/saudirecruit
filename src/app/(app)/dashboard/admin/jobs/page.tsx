@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Plus } from "lucide-react";
 import { AdminSearch, FilterTabs, Td, Th } from "@/components/app/admin-ui";
-import { JobStatusBadge } from "@/components/app/status";
-import { Button } from "@/components/ui/button";
+import { StatusSelect } from "@/components/app/status-select";
+import { LinkButton } from "@/components/ui/button";
 import { Alert } from "@/components/ui/field";
 import { Card, EmptyState, PageHeader } from "@/components/ui/misc";
 import { setJobStatusAction } from "@/lib/actions/recruiting";
@@ -16,6 +16,15 @@ export const metadata: Metadata = { title: "Jobs · Admin" };
 type SP = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)?.trim() || undefined;
 
+const ADMIN_STATUS_OPTIONS = [
+  { value: "active", label: "Active" },
+  { value: "draft", label: "Draft" },
+  { value: "filled", label: "Filled" },
+  { value: "closed", label: "Closed" },
+  { value: "under_review", label: "Under review" },
+  { value: "suspended", label: "Suspended" },
+];
+
 export default async function AdminJobsPage({ searchParams }: { searchParams: Promise<SP> }) {
   await requireAdmin("/dashboard/admin/jobs");
   const sp = await searchParams;
@@ -25,7 +34,20 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeader title="Jobs" description="Every listing on the platform. Suspend anything that breaks the posting rules." />
+      <PageHeader
+        title="Jobs"
+        description="Every listing on the platform: ones you announce for companies and ones employers post."
+        actions={
+          <LinkButton href="/dashboard/admin/jobs/new" variant="dark">
+            <Plus className="size-4" /> Post a job
+          </LinkButton>
+        }
+      />
+      {sp.posted === "1" && (
+        <div className="mb-5">
+          <Alert tone="success">Job saved. Published jobs are live on the public jobs page.</Alert>
+        </div>
+      )}
       <AdminSearch action="/dashboard/admin/jobs" q={q} placeholder="Search by title or company" keep={{ status }} />
       <FilterTabs
         base="/dashboard/admin/jobs"
@@ -50,10 +72,9 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: Pr
               <tr>
                 <Th>Role</Th>
                 <Th>Company</Th>
-                <Th>Status</Th>
                 <Th>Applicants</Th>
                 <Th>Posted</Th>
-                <Th end>Moderation</Th>
+                <Th end>Status</Th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -70,24 +91,10 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: Pr
                       {j.companyName}
                     </Link>
                   </Td>
-                  <Td>
-                    <JobStatusBadge status={j.status} />
-                  </Td>
                   <Td>{j.applicationCount}</Td>
                   <Td className="whitespace-nowrap text-muted">{timeAgo(new Date(j.createdAt))}</Td>
                   <Td end>
-                    <form action={setJobStatusAction}>
-                      <input type="hidden" name="jobId" value={j.id} />
-                      {j.status === "suspended" ? (
-                        <Button type="submit" name="status" value="active" size="sm" variant="outline">
-                          Reinstate
-                        </Button>
-                      ) : (
-                        <Button type="submit" name="status" value="suspended" size="sm" variant="danger">
-                          Suspend
-                        </Button>
-                      )}
-                    </form>
+                    <StatusSelect action={setJobStatusAction} idName="jobId" id={j.id} value={j.status} options={ADMIN_STATUS_OPTIONS} label={`Status for ${j.title}`} />
                   </Td>
                 </tr>
               ))}

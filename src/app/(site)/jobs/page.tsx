@@ -23,6 +23,7 @@ function Filters({ sp }: { sp: Record<string, string | undefined> }) {
     <form action="/jobs" method="get" className="space-y-5">
       {sp.q && <input type="hidden" name="q" value={sp.q} />}
       {sp.city && <input type="hidden" name="city" value={sp.city} />}
+      {sp.tag && <input type="hidden" name="tag" value={sp.tag} />}
       <div>
         <Label htmlFor="f-category">Category</Label>
         <Select id="f-category" name="category" defaultValue={sp.category ?? ""}>
@@ -77,6 +78,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
     type: one(raw.type),
     level: one(raw.level),
     category: one(raw.category),
+    tag: one(raw.tag),
     remote: one(raw.remote),
     page: one(raw.page),
   };
@@ -84,7 +86,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
   const res = await searchJobs({ ...sp, remote: sp.remote === "1", page });
   const total = res.data?.total ?? 0;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const activeFilters = [sp.category, sp.type, sp.level, sp.remote].filter(Boolean).length;
+  const activeFilters = [sp.category, sp.type, sp.level, sp.remote, sp.tag].filter(Boolean).length;
 
   const pageHref = (p: number) => {
     const params = new URLSearchParams();
@@ -92,7 +94,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
     return `/jobs?${params.toString()}`;
   };
 
-  const heading = [sp.q, sp.category].filter(Boolean).join(" · ") || "All jobs";
+  const heading = [sp.q, sp.category, sp.tag ? `#${sp.tag}` : null].filter(Boolean).join(" · ") || "All jobs";
 
   return (
     <>
@@ -101,7 +103,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
           <p className="eyebrow text-brand">Jobs in Saudi Arabia</p>
           <h1 className="display-lg mt-3">Find what&apos;s next.</h1>
           <div className="mt-8 max-w-4xl">
-            <SearchBar q={sp.q} city={sp.city} extra={{ category: sp.category, type: sp.type, level: sp.level, remote: sp.remote }} />
+            <SearchBar q={sp.q} city={sp.city} extra={{ category: sp.category, type: sp.type, level: sp.level, remote: sp.remote, tag: sp.tag }} />
           </div>
         </Container>
       </section>

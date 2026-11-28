@@ -11,8 +11,8 @@ import { UserMenu } from "./user-menu";
 export const NAV_LINKS = [
   { href: "/jobs", label: "Jobs" },
   { href: "/companies", label: "Companies" },
-  { href: "/#employers", label: "For employers" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/hire", label: "Hire talent" },
+  { href: "/send-cv", label: "Send your CV" },
 ];
 
 export async function SiteHeader() {

@@ -172,9 +172,10 @@ export async function createJobAction(_: FormState, formData: FormData): Promise
     visaRequirement: str(formData, "visaRequirement") || "not_specified",
     saudizationApplicable: formData.get("saudizationApplicable") === "on",
   };
-  const values = Object.fromEntries(
-    Object.entries(raw).map(([k, v]) => [k, typeof v === "boolean" ? (v ? "on" : "") : (v ?? "")]),
-  );
+  const values = {
+    ...Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, typeof v === "boolean" ? (v ? "on" : "") : (v ?? "")])),
+    tags: str(formData, "tags"),
+  };
   const parsed = createJobSchema.safeParse(raw);
   if (!parsed.success) return { fieldErrors: flatten(parsed.error.issues), values };
   const d = parsed.data;
@@ -193,6 +194,7 @@ export async function createJobAction(_: FormState, formData: FormData): Promise
       salaryMin: d.salaryMin || null,
       salaryMax: d.salaryMax || null,
       skills: serializeSkills(d.skills),
+      tags: serializeSkills(str(formData, "tags")),
       slug,
       companyId,
       postedById: user.id,

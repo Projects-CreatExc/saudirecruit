@@ -46,6 +46,7 @@ export const jobs = pgTable(
     experienceLevel: experienceLevelEnum("experience_level"),
     category: varchar("category", { length: 100 }),
     skills: text("skills"), // JSON array stored as text
+    tags: text("tags"), // JSON array: admin-defined labels used for filtering
     city: varchar("city", { length: 100 }),
     country: varchar("country", { length: 100 }).default("Saudi Arabia"),
     isRemote: boolean("is_remote").notNull().default(false),

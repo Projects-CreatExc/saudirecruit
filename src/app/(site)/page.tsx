@@ -50,12 +50,12 @@ const candidateSteps = [
 
 const faqs = [
   {
-    q: "Is SaudiRecruit free for job seekers?",
-    a: "Yes. Creating a profile, searching roles and applying is free for candidates.",
+    q: "Do I need an account to apply?",
+    a: "No. Send your CV once, or apply to any job with a short form. Our team contacts you when there's a match. A free account lets you track your applications yourself.",
   },
   {
-    q: "Who can post jobs?",
-    a: "Any employer account. Create your company profile first, then publish roles from your dashboard. Our team can suspend listings that break the posting guidelines.",
+    q: "How do companies hire through SaudiRecruit?",
+    a: "Send us a hiring request with the roles you need, or attach a job description. Our recruiters announce the roles, screen candidates and send you a shortlist. You can also create an employer account and post jobs yourself.",
   },
   {
     q: "Do I need to live in Saudi Arabia to apply?",
@@ -127,7 +127,10 @@ export default async function HomePage() {
               className="pulse-dot bg-brand text-brand size-1.5 rounded-full"
               aria-hidden
             />
-            Hiring across the Kingdom<span className="hidden sm:inline">, in Riyadh, Jeddah, Dammam and beyond</span>
+            Hiring across the Kingdom
+            <span className="hidden sm:inline">
+              , in Riyadh, Jeddah, Dammam and beyond
+            </span>
           </p>
           <h1 className="display-xl mx-auto mt-8 max-w-5xl">
             <span className="sr-only">
@@ -240,7 +243,7 @@ export default async function HomePage() {
           </SpotlightLink>
 
           <SpotlightLink
-            href="/register?role=employer"
+            href="/hire"
             glow="rgba(255,255,255,0.75)"
             className="border-brand/15 bg-brand-soft relative flex min-h-[380px] flex-col overflow-hidden rounded-[var(--radius-panel)] border p-8 transition-transform duration-500 ease-out hover:-translate-y-1 sm:p-10"
           >
@@ -249,8 +252,8 @@ export default async function HomePage() {
               Find your <span className="text-brand italic">next hire.</span>
             </h2>
             <p className="text-body mt-3 max-w-sm text-[15px] leading-relaxed">
-              Post roles, review applicants and move candidates through your
-              pipeline from a single dashboard.
+              Tell us who you need. Our recruiters announce your roles, screen
+              candidates and send you a shortlist.
             </p>
             <span className="bg-brand group-hover:bg-brand-hover mt-8 inline-flex h-12 w-fit items-center gap-2 rounded-full px-6 font-semibold text-white transition-colors">
               Start hiring{" "}
@@ -369,15 +372,15 @@ export default async function HomePage() {
               description={
                 jobsRes.error
                   ? "We couldn't load openings right now. Please refresh in a moment."
-                  : "Employers are setting up their company profiles. Create your profile now so you're ready to apply the moment roles go live."
+                  : "Employers are setting up their company profiles. Send your CV now and our recruiters will contact you the moment a matching role opens."
               }
               action={
                 <div className="flex flex-wrap justify-center gap-2">
-                  <LinkButton href="/register" variant="dark">
-                    Create your profile
+                  <LinkButton href="/send-cv" variant="dark">
+                    Send your CV
                   </LinkButton>
-                  <LinkButton href="/register?role=employer" variant="outline">
-                    <Plus className="size-4" /> Post a job
+                  <LinkButton href="/hire" variant="outline">
+                    <Plus className="size-4" /> Hire talent
                   </LinkButton>
                 </div>
               }
@@ -400,15 +403,16 @@ export default async function HomePage() {
                 designed around how hiring actually works in Saudi Arabia.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <LinkButton href="/register?role=employer" size="lg">
-                  Start hiring <ArrowRight className="size-4 rtl:rotate-180" />
+                <LinkButton href="/hire" size="lg">
+                  Send a hiring request{" "}
+                  <ArrowRight className="size-4 rtl:rotate-180" />
                 </LinkButton>
                 <LinkButton
-                  href="/login?callbackUrl=/dashboard/jobs/new"
+                  href="/register?role=employer"
                   variant="outline"
                   size="lg"
                 >
-                  Post a job
+                  Post jobs yourself
                 </LinkButton>
               </div>
             </Reveal>
@@ -469,9 +473,8 @@ export default async function HomePage() {
               ))}
             </ol>
             <div className="mt-12 flex flex-wrap gap-3">
-              <LinkButton href="/register" variant="dark" size="lg">
-                Sign up for free{" "}
-                <ArrowRight className="size-4 rtl:rotate-180" />
+              <LinkButton href="/send-cv" variant="dark" size="lg">
+                Send your CV <ArrowRight className="size-4 rtl:rotate-180" />
               </LinkButton>
               <LinkButton href="/jobs" variant="outline" size="lg">
                 Browse jobs
@@ -544,22 +547,21 @@ export default async function HomePage() {
             <div className="relative">
               <h2 className="display-lg">What&apos;s your next move?</h2>
               <p className="mx-auto mt-4 max-w-lg text-lg text-white/70">
-                Join as a candidate or start hiring today. It takes less than
-                two minutes.
+                Send your CV or tell us who you need. No account needed, it
+                takes two minutes.
               </p>
               <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
                 <Link
-                  href="/register"
+                  href="/send-cv"
                   className="text-ink hover:bg-brand-soft inline-flex h-[52px] items-center justify-center gap-2 rounded-full bg-white px-6 font-semibold transition-colors"
                 >
-                  Sign up to find a job{" "}
-                  <ArrowRight className="size-4 rtl:rotate-180" />
+                  Send your CV <ArrowRight className="size-4 rtl:rotate-180" />
                 </Link>
                 <Link
-                  href="/register?role=employer"
+                  href="/hire"
                   className="inline-flex h-[52px] items-center justify-center rounded-full border border-white/40 px-6 font-semibold text-white transition-colors hover:border-white hover:bg-white/5"
                 >
-                  Start hiring
+                  Hire talent
                 </Link>
               </div>
             </div>

@@ -152,4 +152,13 @@ for (const [i, j] of jobs.entries()) {
   added += res.length;
 }
 
+// Tags for filtering (added to existing sample jobs too, if they have none yet).
+try {
+  await q(`update jobs set tags = json_build_array(category, case when is_remote then 'Remote' end, case when saudization_applicable then 'Saudization' end, initcap(experience_level::text))::text
+           where slug like '%-sample' and tags is null`);
+  await q(`update jobs set tags = (select json_agg(x)::text from json_array_elements_text(tags::json) x where x is not null and x <> '') where slug like '%-sample'`);
+} catch {
+  console.log("(Run `npm run db:update` first to enable job tags.)");
+}
+
 console.log(`Sample data ready: ${companies.length} companies, ${added} new jobs (${jobs.length - added} already existed).`);

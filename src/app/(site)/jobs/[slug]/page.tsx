@@ -5,6 +5,9 @@ import { after } from "next/server";
 import { eq, sql } from "drizzle-orm";
 import { ArrowLeft, BadgeCheck, Building2, Globe, ShieldCheck, Users } from "lucide-react";
 import { ApplyForm } from "@/components/jobs/apply-form";
+import { GuestApplyForm } from "@/components/requests/guest-apply";
+import { WhatsAppButton } from "@/components/requests/whatsapp";
+import { getSettings, whatsappLink } from "@/lib/agency";
 import { JobMeta } from "@/components/jobs/job-card";
 import { LinkButton } from "@/components/ui/button";
 import { Alert } from "@/components/ui/field";
@@ -15,6 +18,7 @@ import { getAccount, getJobBySlug, getResumeMeta, getUserApplicationForJob } fro
 import { db } from "@/lib/db";
 import { jobs } from "@/lib/db/schema";
 import { timeAgo } from "@/lib/utils";
+import { headers } from "next/headers";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -59,6 +63,11 @@ export default async function JobPage({ params }: Props) {
   const cv =
     user && isSeekerRole(user.role) && !existing ? await getResumeMeta((await getAccount(user.id)).data?.profile?.resumeUrl) : null;
   const skills = parseSkills(job.skills);
+  const tags = parseSkills(job.tags);
+  const settings = await getSettings();
+  const host = (await headers()).get("host");
+  const jobUrl = host ? `https://${host}/jobs/${job.slug}` : `/jobs/${job.slug}`;
+  const wa = whatsappLink(settings.whatsapp, `Hello SaudiRecruit, I'd like to apply for "${job.title}" (${jobUrl}).`);
   const visa = job.visaRequirement && job.visaRequirement !== "not_specified" ? labelFor(VISA_STATUSES, job.visaRequirement) : null;
 
   if (!isOwner) {
@@ -107,6 +116,11 @@ export default async function JobPage({ params }: Props) {
             {job.category && <Badge>{job.category}</Badge>}
             {job.saudizationApplicable && <Badge tone="brand">Saudization role</Badge>}
             {visa && <Badge tone="info">Requires: {visa}</Badge>}
+            {tags.map((t) => (
+              <Link key={t} href={`/jobs?tag=${encodeURIComponent(t)}`} className="inline-flex items-center rounded-full border border-line px-2.5 py-0.5 text-xs font-medium text-ink-soft hover:border-ink">
+                #{t}
+              </Link>
+            ))}
             <Badge tone="neutral">Posted {timeAgo(new Date(job.publishedAt ?? job.createdAt)).replace("Just now", "just now")}</Badge>
           </div>
 
@@ -141,13 +155,22 @@ export default async function JobPage({ params }: Props) {
                   </LinkButton>
                 </div>
               ) : !user ? (
-                <div className="space-y-3">
-                  <LinkButton href={`/login?callbackUrl=${encodeURIComponent(`/jobs/${job.slug}`)}`} size="lg" className="w-full">
-                    Log in to apply
-                  </LinkButton>
-                  <LinkButton href="/register" variant="outline" size="lg" className="w-full">
-                    Create a free profile
-                  </LinkButton>
+                <div className="space-y-4">
+                  <GuestApplyForm jobId={job.id} />
+                  {wa && (
+                    <>
+                      <div className="flex items-center gap-3 text-xs text-subtle">
+                        <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
+                      </div>
+                      <WhatsAppButton href={wa} label="Apply on WhatsApp" className="w-full" />
+                    </>
+                  )}
+                  <p className="text-center text-sm text-muted">
+                    Have an account?{" "}
+                    <Link href={`/login?callbackUrl=${encodeURIComponent(`/jobs/${job.slug}`)}`} className="font-medium text-ink underline underline-offset-4">
+                      Log in
+                    </Link>
+                  </p>
                 </div>
               ) : !isSeekerRole(user.role) ? (
                 <p className="text-sm text-body">Applications are available to job seeker accounts only.</p>
@@ -207,7 +230,7 @@ export default async function JobPage({ params }: Props) {
       {!isOwner && !existing && (!user || isSeekerRole(user.role)) && (
         <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-line bg-white px-5 py-3 md:bottom-0 md:pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden">
           <a href="#apply" className="flex h-12 items-center justify-center rounded-full bg-brand font-semibold text-white">
-            {user ? "Apply now" : "Log in to apply"}
+            Apply now
           </a>
         </div>
       )}

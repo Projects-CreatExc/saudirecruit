@@ -19,6 +19,8 @@ import {
   getSeekerApplications,
 } from "@/lib/data";
 import { timeAgo } from "@/lib/utils";
+import { INQUIRY_TYPE_META } from "@/lib/agency-meta";
+import { inquiryCounts, listInquiries } from "@/lib/data/agency";
 import type { UserRole } from "@/types";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -243,8 +245,10 @@ async function EmployerDashboard({ userId, name }: { userId: string; name: strin
 
 /* ---------------- Admin ---------------- */
 async function AdminDashboard({ role }: { role: UserRole }) {
-  const res = await getAdminOverview();
+  const [res, counts, latest] = await Promise.all([getAdminOverview(), inquiryCounts(), listInquiries({ status: "new" })]);
   if (res.error) return <Alert>{res.error}</Alert>;
+  const newRequests = counts.data?.total ?? 0;
+  const recent = (latest.data ?? []).slice(0, 5);
   const d = res.data;
   const sum = (o: Record<string, number>) => Object.values(o).reduce((a, b) => a + b, 0);
 
@@ -254,9 +258,33 @@ async function AdminDashboard({ role }: { role: UserRole }) {
       <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
         <Stat label="Users" value={sum(d.roleCounts)} hint={`${d.roleCounts.job_seeker ?? 0} candidates · ${d.roleCounts.employer ?? 0} employers`} />
         <Stat label="Active jobs" value={d.jobCounts.active ?? 0} hint={`${sum(d.jobCounts)} total`} />
-        <Stat label="Suspended jobs" value={d.jobCounts.suspended ?? 0} />
+        <Stat label="New requests" value={newRequests} hint="CVs, hiring requests, applications" />
         <Stat label="Applications" value={d.applications} />
       </div>
+
+      <section className="mt-10">
+        <SectionTitle title="New requests" href="/dashboard/admin/requests" />
+        {recent.length === 0 ? (
+          <EmptyState title="You're all caught up" description="New CVs, hiring requests and applications from the website appear here." />
+        ) : (
+          <Card className="divide-y divide-line">
+            {recent.map((r) => (
+              <Link key={r.id} href={`/dashboard/admin/requests/${r.id}`} className="flex items-center gap-3 p-4 hover:bg-surface">
+                <span className="size-2 shrink-0 rounded-full bg-brand" aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{r.fullName}</p>
+                  <p className="truncate text-sm text-muted">
+                    {INQUIRY_TYPE_META[r.type]?.label}
+                    {r.type === "company" && r.companyName ? ` · ${r.companyName}` : ""}
+                    {r.type === "application" && r.jobTitle ? ` · ${r.jobTitle}` : ""}
+                  </p>
+                </div>
+                <span className="text-xs text-subtle">{timeAgo(new Date(r.createdAt))}</span>
+              </Link>
+            ))}
+          </Card>
+        )}
+      </section>
 
       <section className="mt-10">
         <SectionTitle title="Recent job posts" href="/dashboard/admin/jobs" />

@@ -7,15 +7,17 @@ const columns = [
     title: "For candidates",
     links: [
       { href: "/jobs", label: "Browse jobs" },
+      { href: "/send-cv", label: "Send your CV" },
       { href: "/companies", label: "Browse companies" },
-      { href: "/register", label: "Create a profile" },
+      { href: "/register", label: "Create an account" },
       { href: "/applications", label: "Track applications" },
     ],
   },
   {
     title: "For employers",
     links: [
-      { href: "/register?role=employer", label: "Start hiring" },
+      { href: "/hire", label: "Send a hiring request" },
+      { href: "/register?role=employer", label: "Employer account" },
       { href: "/dashboard/jobs/new", label: "Post a job" },
       { href: "/dashboard/applicants", label: "Review applicants" },
       { href: "/dashboard/company", label: "Company profile" },
